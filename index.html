@@ -84,27 +84,34 @@
                 return;
             }
 
-            // Base64 encode the text
-            const encodedText = btoa(encodeURIComponent(text));
-            const link = `${window.location.origin}${window.location.pathname}?text=${encodedText}`;
+            // Generate a random ID
+            const randomId = `text${Math.floor(Math.random() * 100000)}`;
+
+            // Save the text in localStorage
+            localStorage.setItem(randomId, text);
+
+            const link = `${window.location.origin}${window.location.pathname}?id=${randomId}`;
 
             // Display the link
             const outputDiv = document.getElementById('output');
             outputDiv.innerHTML = `<p>Your link:</p><a href="${link}" target="_blank">${link}</a>`;
         }
 
-        // Check if the URL has text in query params
         function displayText() {
             const params = new URLSearchParams(window.location.search);
-            const encodedText = params.get('text');
+            const id = params.get('id');
 
-            if (encodedText) {
-                const decodedText = decodeURIComponent(atob(encodedText));
-                document.body.innerHTML = `<div class="container"><h1></h1><p>${decodedText}</p></div>`;
+            if (id) {
+                const text = localStorage.getItem(id);
+
+                if (text) {
+                    document.body.innerHTML = `<div class="container"><h1>Your Text</h1><p>${text}</p></div>`;
+                } else {
+                    document.body.innerHTML = `<div class="container"><h1>Error</h1><p>Text not found!</p></div>`;
+                }
             }
         }
 
-        // Run displayText if there is a query parameter
         if (window.location.search) {
             displayText();
         }
